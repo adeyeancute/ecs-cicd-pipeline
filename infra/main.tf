@@ -35,6 +35,10 @@ data "aws_subnets" "default" {
   }
 }
 
+data "aws_ecr_repository" "this" {
+  name = "my-repo"
+}
+
 # --- Security Groups ---
 
 resource "aws_security_group" "alb" {
@@ -153,7 +157,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name      = "nginx"
-      image     = "nginx:latest"
+      image     = "${data.aws_ecr_repository.this.repository_url}:latest"
       essential = true
       portMappings = [
         {
